@@ -95,24 +95,24 @@
 
         # Update the sum of RGB values for both original and modified images
         lw $t3, totalR_original
-        lw $t6, totalG_original
-        lw $t7, totalB_original
+        lw $t4, totalG_original
+        lw $t5, totalB_original
         add $t3, $t3, $t0   # $t0 contains the modified R value
-        add $t6, $t6, $t1   # $t1 contains the modified G value
-        add $t7, $t7, $t2   # $t2 contains the modified B value
+        add $t4, $t4, $t1   # $t1 contains the modified G value
+        add $t5, $t5, $t2   # $t2 contains the modified B value
         sw $t3, totalR_original
-        sw $t6, totalG_original
-        sw $t7, totalB_original
+        sw $t4, totalG_original
+        sw $t5, totalB_original
 
-        lw $t8, totalR_modified
-        lw $t9, totalG_modified
-        lw $t10, totalB_modified
-        add $t8, $t8, $t0   # $t0 contains the modified R value
-        add $t9, $t9, $t1   # $t1 contains the modified G value
-        add $t10, $t10, $t2 # $t2 contains the modified B value
-        sw $t8, totalR_modified
-        sw $t9, totalG_modified
-        sw $t10, totalB_modified
+        lw $t6, totalR_modified
+        lw $t7, totalG_modified
+        lw $t8, totalB_modified
+        add $t6, $t6, $t0   # $t0 contains the modified R value
+        add $t7, $t7, $t1   # $t1 contains the modified G value
+        add $t8, $t8, $t2   # $t2 contains the modified B value
+        sw $t6, totalR_modified
+        sw $t7, totalG_modified
+        sw $t8, totalB_modified
 
         # Check if we've processed all pixels
         addi $t5, $t5, 1
