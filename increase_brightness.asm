@@ -37,6 +37,17 @@
         syscall
         move $s1, $v0        # Store the file descriptor in $s1
 
+        # Skip the first four lines (header) in the input file
+        li $t0, 0             # Initialize line counter
+        skip_header:
+            li $v0, 14         # syscall code for read
+            move $a0, $s0      # Input file descriptor
+            la $a1, buffer
+            li $a2, 3          # Buffer size for RGB values
+            syscall
+            addi $t0, $t0, 1   # Increment line counter
+            bne $t0, 4, skip_header
+
         # Write the PPM header to the output file
         li $v0, 15           # syscall code for write
         move $a0, $s1        # Output file descriptor
@@ -44,12 +55,12 @@
         li $a2, 21           # Length of the header
         syscall
 
-        # Loop through each pixel
-        li $t4, 4096         # Total number of pixels
+        # Loop through each line
+        li $t4, 4096         # Total number of lines (pixels)
         li $t5, 0            # Loop counter
 
     loop:
-        # Read RGB values from the input file
+        # Read a line from the input file
         li $v0, 14          # syscall code for read
         move $a0, $s0       # Input file descriptor
         la $a1, buffer
@@ -64,26 +75,20 @@
         addi $t1, $t1, -48
         addi $t2, $t2, -48
 
-        # Increase each RGB value by 10 (clamp to 255)
+        # Increase each value by 10 (clamp to 255)
         addi $t0, $t0, 10
         addi $t1, $t1, 10
         addi $t2, $t2, 10
-        bgt $t0, 255, clamp_r
-        bgt $t1, 255, clamp_g
-        bgt $t2, 255, clamp_b
-        j write_pixel
+        bgt $t0, 255, clamp_value
+        bgt $t1, 255, clamp_value
+        bgt $t2, 255, clamp_value
+        j write_line
 
-    clamp_r:
+    clamp_value:
         li $t0, 255
 
-    clamp_g:
-        li $t1, 255
-
-    clamp_b:
-        li $t2, 255
-
-    write_pixel:
-        # Write modified RGB values to the output file
+    write_line:
+        # Write the modified line to the output file
         sb $t0, buffer
         sb $t1, buffer+1
         sb $t2, buffer+2
@@ -114,7 +119,7 @@
         sw $t7, totalG_modified
         sw $t8, totalB_modified
 
-        # Check if we've processed all pixels
+        # Check if we've processed all lines
         addi $t5, $t5, 1
         bne $t5, $t4, loop
 
@@ -133,7 +138,7 @@
             lw $t0, totalR_original
             lw $t1, totalG_original
             lw $t2, totalB_original
-            li $t3, 4096      # Total number of pixels
+            li $t3, 4096      # Total number of lines (pixels)
             divu $t0, $t0, $t3
             divu $t1, $t1, $t3
             divu $t2, $t2, $t3
@@ -179,7 +184,7 @@
             lw $t0, totalR_modified
             lw $t1, totalG_modified
             lw $t2, totalB_modified
-            li $t3, 4096      # Total number of pixels
+            li $t3, 4096      # Total number of lines (pixels)
             divu $t0, $t0, $t3
             divu $t1, $t1, $t3
             divu $t2, $t2, $t3
