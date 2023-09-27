@@ -92,10 +92,17 @@ add10:
     la   $a1, str             # $a1 = address of string where converted number will be kept
     jal  int2str
 
+    la $a0, str             # Load address of string.
+    jal strlen  
+
+    jal check
+
+    
+
     li $v0, 15  
     move $a0, $s1  
     la $a1, str  # Address of the  data
-    la $a2, 3   # Length of the  data
+    move $a2, $t7   # Length of the  data
     syscall
 
    li $v0, 15  
@@ -177,6 +184,32 @@ sb  $zero, ($a1)          # *str = 0 (end of string marker)
 lw   $t0, ($sp)           # restore $t0 value before function was called
 addi $sp, $sp, 4          # restore stack
 jr  $ra                   # jump to caller
+
+
+
+strlen:
+li $t9, 0 # initialize the count to zero
+loop2:
+lb $t7, 0($a0) # load the next character into t1
+beqz $t7, exit # check for the null character
+addi $a0, $a0, 1 # increment the string pointer
+addi $t9, $t9, 1 # increment the count
+j loop2 # return to the top of the loop
+exit:
+jr $ra
+
+check:
+    beq $t9,1,one
+    beq,$t9,2,two
+    li $t7,3
+
+    jr $ra
+
+one:  li $t7,1
+     jr $ra
+
+two:  li $t7,2
+     jr $ra
 
 
 end:

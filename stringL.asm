@@ -4,6 +4,7 @@
 string: .asciiz "Hello"
 
 printedMessage: .asciiz "The length of the string: "
+out: .asciiz "test"
 
     .text
 main:
@@ -36,8 +37,21 @@ li $v0, 4
   syscall
 
   li $v0, 1
-  move $a0, $t1
+  move $a0, $t0
   syscall
 
+  beq $t0,5,print2
 
-jr $ra
+  jr $ra
+
+print2:
+ li $v0, 4
+  la $a0,out
+  syscall
+
+  jr $ra
+
+
+
+
+
