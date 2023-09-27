@@ -1,7 +1,7 @@
 .data 
-filename: .asciiz "C:/Users/User/Desktop/A4/A4/house_64_in_ascii_crlf.ppm"
-outputfile: .asciiz "C:/Users/User/Desktop/A4/A4/house64new.ppm"
-header_text:   .asciiz "P3\n# Hse\n64 64\n255\n"
+filename: .asciiz "C:/Users/User/Desktop/A4/tree_64_in_ascii_crlf.ppm"
+outputfile: .asciiz "C:/Users/User/Desktop/A4/New.ppm"
+header_text:   .asciiz "P3\n# New\n64 64\n255\n"
 filewords: .space 100000
 str:   .space 128
 newline: .asciiz "\n"
@@ -77,13 +77,13 @@ not_numeric:
 print_number:
     # Print the accumulated integer
 average: 
-add $t6, $t6, $t1
+add $t6, $t6, $t1 #old image running total
 
 add10:
     addi $t1, $t1, 10
     bgt $t1, 255, change
  print:
-    add $t8, $t8, $t1
+    add $t8, $t8, $t1 #new image running total
     
 
     move  $a0, $t1          # $a0 = int to convert

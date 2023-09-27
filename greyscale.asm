@@ -1,6 +1,6 @@
 .data 
-filename: .asciiz "C:/Users/User/Desktop/A4/A4/house_64_in_ascii_crlf.ppm"
-outputfile: .asciiz "C:/Users/User/Desktop/A4/A4/greyscale.ppm"
+filename: .asciiz "C:/Users/User/Desktop/A4/house_64_in_ascii_crlf.ppm"
+outputfile: .asciiz "C:/Users/User/Desktop/A4/greyscale.ppm"
 header_text:   .asciiz "P2\n# GRY\n64 64\n255\n"
 str:   .space 128
 filewords: .space 100000
@@ -27,7 +27,11 @@ main:
     # Initialize integer value accumulator
     li $t1, 0
     li $t2, 10         # ASCII value for newline
+    
     la $t0, filewords  # Load address of the buffer
+
+    li $t6, 0    
+    li $t8, 0
 
     # Open the file for writing
    li $v0, 13       # syscall code for open file
@@ -73,13 +77,23 @@ not_numeric:
     j continue_loop
 
 print_number:
-    # Print the accumulated integer
-average: 
-add $t6, $t6, $t1
+
+add10:
+   add $t6, $t6, $t1
+   addi $t8, $t8, 1
+   beq $t8, 3, intit
+   li $t1, 0
+   j continue_loop
+
+        
+
+intit: 
+    div $t1, $t6, 3
+
 
 
  print:
-    add $t8, $t8, $t1
+    
     
 
     move  $a0, $t1          # $a0 = int to convert
@@ -109,6 +123,9 @@ add $t6, $t6, $t1
 
     # Reset accumulator for the next number
     li $t1, 0
+    li $t1, 0
+    li $t6, 0
+    li $t8, 0
     j continue_loop
     
 
