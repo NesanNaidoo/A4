@@ -84,9 +84,7 @@ add10:
     bgt $t1, 255, change
  print:
     add $t8, $t8, $t1
-    li $v0, 1
-    move $a0, $t1
-    syscall
+    
 
     move  $a0, $t1          # $a0 = int to convert
     la   $a1, str             # $a1 = address of string where converted number will be kept
@@ -111,10 +109,7 @@ add10:
    la $a2, 1   # Length of the header data
    syscall
 
-    # Print a newline
-    li $v0, 4
-    la $a0, newline
-    syscall
+   
 
     # Reset accumulator for the next number
     li $t1, 0
