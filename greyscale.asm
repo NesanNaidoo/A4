@@ -1,9 +1,7 @@
 .data 
 filename: .asciiz "C:/Users/User/Desktop/A4/A4/house_64_in_ascii_crlf.ppm"
-filewords: .space 100000
+filewords: .space 300000
 newline: .asciiz "\n"
-out1: .asciiz "Average pixel value of the original image:\n"
-out2: .asciiz "\nAverage pixel value of new image:\n"
 double64: .double 4096.0
 
 .text
@@ -20,7 +18,7 @@ main:
     li $v0, 14
     move $a0, $s0
     la $a1, filewords
-    la $a2, 100000
+    la $a2, 300000
     syscall
 
     # Initialize integer value accumulator
@@ -83,30 +81,7 @@ continue_loop:
     addi $t0, $t0, 1   # Move to the next character
     j loop
 
-end:
- 
- li $v0, 4 
-la $a0, out1
-syscall
 
-li $t9, 31334400
-mtc1 $t9, $f14
-
-mtc1 $t6, $f0
-div.d $f4, $f0, $f14
-li $v0, 3
-add.d $f12, $f4, $f30
-syscall
-
-li $v0, 4 
-la $a0, out2
-syscall
-
-mtc1 $t8, $f6
-div.d $f10, $f6, $f14
-li $v0, 3
-add.d $f12, $f10, $f30
-syscall
 
 # Exit the program
     li $v0, 10
