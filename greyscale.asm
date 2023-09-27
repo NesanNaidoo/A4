@@ -1,6 +1,6 @@
 .data 
 filename: .asciiz "C:/Users/User/Desktop/A4/house_64_in_ascii_crlf.ppm"
-outputfile: .asciiz "C:/Users/User/Desktop/A4/greyscale.ppm"
+outputfile: .asciiz "C:/Users/User/Desktop/A4/grey.ppm"
 header_text:   .asciiz "P2\n# GRY\n64 64\n255\n"
 str:   .space 128
 filewords: .space 100000
@@ -34,20 +34,20 @@ main:
     li $t8, 0
 
     # Open the file for writing
-   li $v0, 13       # syscall code for open file
-   la $a0, outputfile # Load the address of the filename
-   li $a1, 1        # Open for write (O_WRONLY)
+   li $v0, 13      
+   la $a0, outputfile 
+   li $a1, 1        
    syscall
-   move $s1, $v0    # Store the file descriptor in $s0
+   move $s1, $v0    
 
    # Write header data to the file
     li $v0, 15  
    move $a0, $s1  
-   la $a1, header_text  # Address of the header data
-   la $a2, 19   # Length of the header data
+   la $a1, header_text  
+   la $a2, 19   
    syscall
 
-   # Close the file
+   
   
 
 
@@ -64,30 +64,30 @@ loop:
     bgt $t3, $t5, not_numeric
 
     # Convert ASCII to integer
-    sub $t3, $t3, $t4  # Convert ASCII to integer
-    mul $t1, $t1, 10    # Multiply the current accumulated value by 10
-    add $t1, $t1, $t3   # Add the new digit
+    sub $t3, $t3, $t4  
+    mul $t1, $t1, 10    
+    add $t1, $t1, $t3   
     j continue_loop
 
 not_numeric:
-    # If it's not a valid numeric character, check for newline
+    # If it's not a valid number character, check for newline
     beq $t3, $t2, print_number
 
-    # If it's not a number or newline, skip it
+    # Else skip it
     j continue_loop
 
 print_number:
 
-add10:
+grey:
    add $t6, $t6, $t1
    addi $t8, $t8, 1
-   beq $t8, 3, intit
+   beq $t8, 3, divit
    li $t1, 0
    j continue_loop
 
         
 
-intit: 
+divit: 
     div $t1, $t6, 3
 
 
@@ -135,26 +135,20 @@ continue_loop:
     j loop
 
 int2str:
-addi $sp, $sp, -4         # to avoid headaches save $t- registers used in this procedure on stack
-sw   $t0, ($sp)           # so the values don't change in the caller. We used only $t0 here, so save that.
-bltz $a0, neg_num         # is num < 0 ?
+addi $sp, $sp, -4        
+sw   $t0, ($sp)          
+        # is num < 0 ?
 j    next0                # else, goto 'next0'
 
-neg_num:                  # body of "if num < 0:"
-li   $t0, '-'
-sb   $t0, ($a1)           # *str = ASCII of '-' 
-addi $a1, $a1, 1          # str++
-li   $t0, -1
-mul  $a0, $a0, $t0        # num *= -1
 
 next0:
 li   $t0, -1
 addi $sp, $sp, -4         # make space on stack
-sw   $t0, ($sp)           # and save -1 (end of stack marker) on MIPS stack
+sw   $t0, ($sp)           
 
 push_digits:
 blez $a0, next1           # num < 0? If yes, end loop (goto 'next1')
-li   $t0, 10              # else, body of while loop here
+li   $t0, 10              
 div  $a0, $t0             # do num / 10. LO = Quotient, HI = remainder
 mfhi $t0                  # $t0 = num % 10
 mflo $a0                  # num = num // 10  
@@ -177,15 +171,15 @@ j    next2                # jump to next2
 
 pop_digits:
 bltz $t0, next2           # if digit <= 0 goto next2 (end of loop)
-addi $t0, $t0, '0'        # else, $t0 = ASCII of digit
-sb   $t0, ($a1)           # *str = ASCII of digit
-addi $a1, $a1, 1          # str++
-lw   $t0, ($sp)           # digit = pop off from MIPS stack 
-addi $sp, $sp, 4          # restore stack
-j    pop_digits           # and loop
+addi $t0, $t0, '0'        
+sb   $t0, ($a1)           
+addi $a1, $a1, 1          
+lw   $t0, ($sp)           
+addi $sp, $sp, 4          
+j    pop_digits           
 
 next2:
-sb  $zero, ($a1)          # *str = 0 (end of string marker)
+sb  $zero, ($a1)          
 
 lw   $t0, ($sp)           # restore $t0 value before function was called
 addi $sp, $sp, 4          # restore stack
