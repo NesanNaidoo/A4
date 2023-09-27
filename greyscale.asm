@@ -55,9 +55,7 @@ print_number:
 average: 
 add $t6, $t6, $t1
 
-add10:
-    addi $t1, $t1, 10
-    bgt $t1, 255, change
+ 
  print:
     add $t8, $t8, $t1
     li $v0, 1
@@ -73,14 +71,13 @@ add10:
     li $t1, 0
     j continue_loop
     
-change:
-addi $t1, $zero, 255
-j print
+
 
 continue_loop:
     addi $t0, $t0, 1   # Move to the next character
     j loop
 
+end:
 
 
 # Exit the program
